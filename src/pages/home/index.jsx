@@ -1,18 +1,34 @@
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
+import { logOut } from "../../firebase/auth";
 import { route } from "../../routes";
 
 const Home = () => {
 
     const navigate = useNavigate();
 
-    const handelLogout = () => {
+    const [user, loading] = useAuthState(firebaseAuth);
+
+    const userEmail = user?.email;
+    const userName = userEmail?.split('@')[0];
+    const displayName = userName?.charAt(0)?.toUpperCase() + userName?.slice(1);
+
+    const handelLogout = async () => {
+        await logOut();
         navigate(route.login);
     }
 
+    if (loading) return (
+        <div className="h-screen grid place-items-center">
+            <p className="text-4xl font-semibold">User info loading...</p>
+        </div>
+    )
+
     return (
         <div>
-            <header className="flex gap-4 bg-slate-200 p-4 justify-end items-center">
-                <p className="font-semibold">use email</p>
+            <header className="flex justify-end items-center gap-4 p-4 bg-slate-200 backdrop-blur-md">
+                <p className="font-semibold">{userEmail || 'unknown'}</p>
 
                 <button
                     onClick={handelLogout}
@@ -23,7 +39,7 @@ const Home = () => {
             </header>
 
             <section className="flex items-center justify-center mt-52 text-5xl">
-                Welcome user
+                Welcome {displayName || 'Unknown'}
             </section>
         </div>
     )

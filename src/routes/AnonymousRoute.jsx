@@ -3,8 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { firebaseAuth } from "../firebase/config";
 import { route } from ".";
 
-const AuthRoute = () => {
-
+const AnonymousRoute = () => {
     const [user, loading] = useAuthState(firebaseAuth);
 
     if (loading) return (
@@ -13,9 +12,9 @@ const AuthRoute = () => {
         </div>
     )
 
-    return user
+    return !user
         ? <Outlet />
-        : <Navigate to={route.login} />
+        : <Navigate to={route.root} />
 }
 
-export default AuthRoute
+export default AnonymousRoute
